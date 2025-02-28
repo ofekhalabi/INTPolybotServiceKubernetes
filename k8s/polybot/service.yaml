@@ -8,5 +8,5 @@ spec:
     app: polybot
   ports:
     - protocol: TCP
-      port: 80
+      port: 8443
       targetPort: 8443
