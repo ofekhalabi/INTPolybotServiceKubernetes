@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: polybot-deployment
+  labels:
+    app: polybot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: polybot
+  template:
+    metadata:
+      labels:
+        app: polybot
+    spec:
+      containers:
+      - name: polybot
+        image: ofekhalabi/polybot:28
+        env:
+        - name: TELEGRAM_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: polybot-k8s-secret
+              key: TELEGRAM_TOKEN
+        - name: TELEGRAM_APP_URL
+          value: "https://polybot.devops-int-college.com"
+        - name: BUCKET_NAME
+          value: "ofekh-polybotservicedocker-project"
