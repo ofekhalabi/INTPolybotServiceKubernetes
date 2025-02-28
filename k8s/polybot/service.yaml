@@ -1,11 +1,12 @@
-apiversion: v1
+apiVersion: v1
 kind: Service
 metadata:
   name: svc-polybot
+  namespace: default
 spec:
   selector:
     app: polybot
   ports:
     - protocol: TCP
-      port: 8443
+      port: 80
       targetPort: 8443
