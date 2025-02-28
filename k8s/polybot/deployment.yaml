@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: polybot-deployment
+  namespace: default
   labels:
     app: polybot
 spec:
