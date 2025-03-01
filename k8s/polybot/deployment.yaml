@@ -28,3 +28,5 @@ spec:
           value: "https://polybot.devops-int-college.com:8443"
         - name: BUCKET_NAME
           value: "ofekh-polybotservicedocker-project"
+        - name: CERTIFICATE_FILE_NAME
+          value: "ofekh_polybot_certificate.crt"

@@ -3,6 +3,7 @@ from loguru import logger
 import os
 import time
 from telebot.types import InputFile
+CERTIFICATE_FILE_NAME = os.environ['CERTIFICATE_FILE_NAME']
 
 
 class Bot:
@@ -11,7 +12,8 @@ class Bot:
         # create a new instance of the TeleBot class.
         # all communication with Telegram servers are done using self.telegram_bot_client
         self.telegram_bot_client = telebot.TeleBot(token)
-
+        # set the webhook URL
+        self.telegram_bot_client.set_webhook(..., certificate=open(CERTIFICATE_FILE_NAME, 'r'))
         # remove any existing webhooks configured in Telegram servers
         self.telegram_bot_client.remove_webhook()
         time.sleep(0.5)
