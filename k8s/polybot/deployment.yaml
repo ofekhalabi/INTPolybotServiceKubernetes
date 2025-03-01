@@ -24,9 +24,16 @@ spec:
             secretKeyRef:
               name: polybot-k8s-secret
               key: TELEGRAM_TOKEN
+        
+        - name: POLYBOT_CERTIFICATE
+          valueFrom:
+            secretKeyRef:
+              name: polybot-k8s-secret
+              key: POLYBOT_CERTIFICATE
+
         - name: TELEGRAM_APP_URL
           value: "https://polybot.devops-int-college.com:8443"
+        
         - name: BUCKET_NAME
           value: "ofekh-polybotservicedocker-project"
-        - name: CERTIFICATE_FILE_NAME
-          value: "ofekh_polybot_certificate.crt"
+        
