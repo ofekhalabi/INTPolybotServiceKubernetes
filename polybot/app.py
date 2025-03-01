@@ -6,10 +6,11 @@ from bot import ObjectDetectionBot
 app = flask.Flask(__name__)
 
 
-# TODO load TELEGRAM_TOKEN value from Secret Manager
-TELEGRAM_TOKEN = ...
-
-TELEGRAM_APP_URL = os.environ['TELEGRAM_APP_URL']
+try:
+    TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
+    TELEGRAM_APP_URL = os.environ['TELEGRAM_APP_URL']
+except KeyError as e:
+    raise RuntimeError(f"Missing required environment variable: {e}")
 
 
 @app.route('/', methods=['GET'])
