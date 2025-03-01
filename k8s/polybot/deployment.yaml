@@ -32,7 +32,7 @@ spec:
               key: POLYBOT_CERTIFICATE
 
         - name: TELEGRAM_APP_URL
-          value: "https://polybot.devops-int-college.com:8443"
+          value: "https://polybot.devops-int-college.com"
         
         - name: BUCKET_NAME
           value: "ofekh-polybotservicedocker-project"
