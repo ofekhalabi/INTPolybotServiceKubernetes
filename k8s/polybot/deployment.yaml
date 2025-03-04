@@ -26,7 +26,7 @@ spec:
               key: TELEGRAM_TOKEN
 
         - name: TELEGRAM_APP_URL
-          value: "https://polybot.devops-int-college.com"
+          value: "https://polybot.devops-int-college.com:8443"
         
         - name: BUCKET_NAME
           value: "ofekh-polybotservicedocker-project"
