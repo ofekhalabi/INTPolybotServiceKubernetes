@@ -30,4 +30,3 @@ spec:
         
         - name: BUCKET_NAME
           value: "ofekh-polybotservicedocker-project"
-        

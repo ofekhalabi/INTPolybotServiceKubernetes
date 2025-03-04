@@ -8,16 +8,16 @@ spec:
       containers:
         - name: mongo-init
           image: mongo:5
-          command: 
+          command:
             - "bash"
             - "-c"
             - |
-              echo "Waiting for MongoDB primary to be available...";
+              # Wait for the MongoDB pods to be ready
               until nc -z -v -w30 mongodb-0.mongodb:27017; do
-                echo "Waiting for MongoDB to be up...";
+                echo "Waiting for MongoDB primary to be up...";
                 sleep 5;
               done;
-              echo "MongoDB is ready!";
+              # Initialize the replica set
               mongosh --host mongodb-0.mongodb:27017 --eval 'rs.initiate({
                 _id: "myReplicaSet",
                 members: [
@@ -27,4 +27,4 @@ spec:
                 ]
               })'
       restartPolicy: OnFailure
-  backoffLimit: 4  # Retry up to 4 times
+  backoffLimit: 4  # Retry up to 4 times if it fails
