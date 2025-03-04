@@ -18,6 +18,9 @@ spec:
         - name: mongo
           image: mongo:5
           command:
-            - |
-              mongod --replSet myReplicaSet --bind_ip
+            - "mongod"
+            - "--replSet"
+            - "myReplicaSet"
+            - "--bind_ip_all"
+
           
