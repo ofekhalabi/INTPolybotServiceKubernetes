@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+  namespace: default
+  labels:
+    app: mongo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        image: mongo:5
+        command:
+            - "mongod"
+            - "--replSet"
+            - "myReplicaSet"
+            - "--bind_ip"
+            - "0.0.0.0"
+            - "--port"
+            - "27017"
+            

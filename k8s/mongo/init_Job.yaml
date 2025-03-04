@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mongo-init
+spec:
+  template:
+    spec:
+      containers:
+        - name: mongo-init
+          image: mongo:5
+          command: 
+            - "bash"
+            - "-c"
+            - |
+              sleep 10 && \
+              mongosh --host mongodb-0.mongodb:27017 --eval 'rs.initiate({
+                _id: "myReplicaSet",
+                members: [
+                  { _id: 0, host: "mongodb-0.mongodb:27017" },
+                  { _id: 1, host: "mongodb-1.mongodb:27017" },
+                  { _id: 2, host: "mongodb-2.mongodb:27017" }
+                ]
+              })'
+      restartPolicy: OnFailure
+  backoffLimit: 4  # Retry up to 4 times
