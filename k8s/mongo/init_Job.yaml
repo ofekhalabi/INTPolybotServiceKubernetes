@@ -13,7 +13,7 @@ spec:
             - "-c"
             - |
               # Wait for the MongoDB pods to be ready
-              sudo apt update && sudo apt install dnsutils -y
+              apt update && sudo apt install dnsutils -y
               until nc -z -v -w30 mongodb-0.mongodb:27017; do
                 echo "Waiting for MongoDB primary to be up...";
                 sleep 5;
