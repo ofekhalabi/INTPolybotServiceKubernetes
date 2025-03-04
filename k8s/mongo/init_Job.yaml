@@ -12,7 +12,12 @@ spec:
             - "bash"
             - "-c"
             - |
-              sleep 10 && \
+              echo "Waiting for MongoDB primary to be available...";
+              until nc -z -v -w30 mongodb-0.mongodb:27017; do
+                echo "Waiting for MongoDB to be up...";
+                sleep 5;
+              done;
+              echo "MongoDB is ready!";
               mongosh --host mongodb-0.mongodb:27017 --eval 'rs.initiate({
                 _id: "myReplicaSet",
                 members: [
