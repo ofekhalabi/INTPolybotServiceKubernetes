@@ -3,9 +3,9 @@ kind: Service
 metadata:
   name: mongodb
 spec:
-  clusterIP: None
+  clusterIP: None  # Headless Service for StatefulSet
   selector:
-    app: mongodb
+    app: mongodb  # Select pods from the StatefulSet
   ports:
-  - port: 27017
+  - port: 27017    # MongoDB default port
     name: mongo

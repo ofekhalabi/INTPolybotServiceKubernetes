@@ -22,6 +22,7 @@ spec:
           - bash
           - "-c"
           - |
+            # Initialize MongoDB replica set
             mongod --replSet rs0 --bind_ip_all
   #       volumeMounts:
   #       - name: mongo-data
