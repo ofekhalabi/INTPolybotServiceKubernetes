@@ -13,7 +13,7 @@ spec:
           args:
             - |
               until mongosh --host mongodb-0.mongodb:27017 --eval "print('MongoDB is up')" >/dev/null 2>&1; do 
-                sleep 2 
+                sleep 10
               done 
               mongosh --host mongodb-0.mongodb.default.svc.cluster.local --eval '
               rs.initiate({ 
