@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mongodb
-  labels:
-    app: mongodb
 spec:
   serviceName: "mongodb"
   replicas: 3
@@ -16,9 +14,18 @@ spec:
         app: mongodb
     spec:
       containers:
-        - image: mongo:5
-          command:
-            - mongod
-            - "--replSet"
-            - "myReplicaSet"
-
+      - name: mongodb
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+  #       volumeMounts:
+  #       - name: mongo-data
+  #         mountPath: /data/db
+  # volumeClaimTemplates:
+  # - metadata:
+  #     name: mongo-data
+  #   spec:
+  #     accessModes: ["ReadWriteOnce"]
+  #     resources:
+  #       requests:
+  #         storage: 1Gi

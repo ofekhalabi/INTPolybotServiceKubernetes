@@ -14,22 +14,19 @@ spec:
             - |
               # Wait for the MongoDB pods to be ready
               apt update &&  apt install netcat -y
-              until nc -z -v -w30 mongodb-0.mongodb:27017; do
-                echo "Waiting for MongoDB primary to be up...";
-                sleep 5;
-              done;
-              until mongosh --host mongodb-0.mongodb:27017 --eval "db.runCommand({ping:1})" >/dev/null 2>&1; do
-                echo "Waiting for MongoDB to be ready..."
+              until nc -z mongodb-0.mongodb 27017; do
+                echo "Waiting for MongoDB to start..."
                 sleep 5
-              done;
-              # Initialize the replica set
-              mongosh --host mongodb-0.mongodb:27017 --eval 'rs.initiate({
-                _id: "myReplicaSet",
+              done
+              mongo mongodb-0.mongodb:27017 <<EOF
+              rs.initiate({
+                _id: "rs0",
                 members: [
                   { _id: 0, host: "mongodb-0.mongodb:27017" },
                   { _id: 1, host: "mongodb-1.mongodb:27017" },
                   { _id: 2, host: "mongodb-2.mongodb:27017" }
                 ]
-              })'
-      restartPolicy: OnFailure
+              })
+              EOF
+      restartPolicy: Never
   backoffLimit: 4  # Retry up to 4 times if it fails
