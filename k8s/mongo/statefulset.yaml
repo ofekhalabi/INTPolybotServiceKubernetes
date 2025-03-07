@@ -13,6 +13,29 @@ spec:
       labels:
         app: mongodb
     spec:
+      initContainers:
+        - name: mongo-init
+          image: mongo:5
+          command:
+            - "bash"
+            - "-c"
+            - |
+              # Wait for the MongoDB pods to be ready
+              apt update &&  apt install netcat -y
+              until nc -z mongodb-0.mongodb 27017; do
+                echo "Waiting for MongoDB to start..."
+                sleep 5
+              done
+              mongosh mongodb-0.mongodb:27017 --eval "rs.initiate({
+                _id: 'rs0',
+                members: [
+                  { _id: 0, host: 'mongodb-0.mongodb:27017' },
+                  { _id: 1, host: 'mongodb-1.mongodb:27017' },
+                  { _id: 2, host: 'mongodb-2.mongodb:27017' }
+                ]
+              })"
+          # You might want to ensure nc (netcat) is available in the image
+          # or use a different way to check if the MongoDB instance is ready
       containers:
       - name: mongodb
         image: mongo:latest
