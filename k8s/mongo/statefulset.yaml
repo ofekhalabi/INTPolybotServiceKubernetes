@@ -43,17 +43,7 @@ spec:
             - "rs0"
             - "--bind_ip"
             - "0.0.0.0"
-          volumeMounts:
-            - name: mongo-data
-              mountPath: /data/db
-  volumeClaimTemplates:
-    - metadata:
-        name: mongo-data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 5Gi
+
 
 
 
