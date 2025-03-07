@@ -16,15 +16,9 @@ spec:
         app: mongodb
     spec:
       containers:
-          image: mongo:5
+        - image: mongo:5
           command:
             - mongod
             - "--replSet"
             - "myReplicaSet"
-
-
-
-
-
-
 
