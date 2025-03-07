@@ -18,6 +18,11 @@ spec:
         image: mongo:latest
         ports:
         - containerPort: 27017
+        command:
+          - "mongod"
+          - "--replSet"
+          - "rs0"   # Replace with your replica set name
+          - "--bind_ip_all"
   #       volumeMounts:
   #       - name: mongo-data
   #         mountPath: /data/db
