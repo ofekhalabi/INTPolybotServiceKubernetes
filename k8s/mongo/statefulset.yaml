@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mongo
+  name: mongodbdb
   labels:
-    app: mongo
+    app: mongodb
 spec:
-  serviceName: "mongo"
+  serviceName: "mongodb"
   replicas: 3
   selector:
     matchLabels:
-      app: mongo
+      app: mongodb
   template:
     metadata:
       labels:
-        app: mongo
+        app: mongodb
     spec:
       containers:
-        - name: mongo
-          image: mongo:5
+        - name: mongodb
+          image: mongodb:5
           command:
-            - mongod
+            - mongodbd
             - "--replSet"
             - "myReplicaSet"
 
