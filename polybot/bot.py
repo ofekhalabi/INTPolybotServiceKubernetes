@@ -6,6 +6,7 @@ from telebot.types import InputFile
 import boto3
 from botocore.exceptions import NoCredentialsError
 import requests
+import json
 
 try:
     BUCKET_NAME = os.environ['BUCKET_NAME']

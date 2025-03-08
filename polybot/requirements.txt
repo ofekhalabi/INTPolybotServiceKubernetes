@@ -6,3 +6,4 @@ matplotlib
 boto3
 boto3
 polybot
+json
