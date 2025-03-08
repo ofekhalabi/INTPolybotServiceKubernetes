@@ -91,7 +91,7 @@ class Bot:
         sqs_client = boto3.client('sqs')
         try:
             response = sqs_client.send_message(
-                QueueUrl=SQS_URL,
+                QueueUrl=str(SQS_URL),
                 MessageBody=json.dumps(params)
             )
             logger.info(f"Message sent to SQS. Message ID: {response['MessageId']}")
