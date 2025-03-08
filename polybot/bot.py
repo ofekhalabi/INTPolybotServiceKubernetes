@@ -99,6 +99,7 @@ class Bot:
             logger.error(f"Error sending message to SQS: {e}")
             return f"Error sending message to SQS: {e}", 500
         
+        time.sleep(5)  # Wait for the prediction to complete
         s3_image_key_download = f'predictions/picture.jpg'
         original_img_path = f'/tmp/image.jpg'  # Temporary storage for downloaded image
         try:
