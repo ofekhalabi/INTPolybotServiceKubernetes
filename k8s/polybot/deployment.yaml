@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: polybot
-        image: ofekhalabi/polybot:28
+        image: ofekhalabi/polybot:latest
         env:
         - name: TELEGRAM_TOKEN
           valueFrom:
