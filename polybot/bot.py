@@ -87,12 +87,14 @@ class Bot:
             return f"Error uploading file: {e}", 500
         
         # send an HTTP request to the `SQS` service for prediction
-        sqs_url = SQS_URL
         params = {"imgName": s3_image_key_upload}
+        sqs_client = boto3.client('sqs')
         try:
-            response = requests.post(sqs_url, json=params)
-            logger.info(f"Response from SQS: {response.json()}")
-            self.send_text(msg['chat']['id'], f'Your image is being processed. Please wait...')
+            response = sqs_client.send_message(
+                QueueUrl=SQS_URL,
+                MessageBody=json.dumps(params)
+            )
+            logger.info(f"Message sent to SQS. Message ID: {response['MessageId']}")
         except Exception as e:
             logger.error(f"Error sending message to SQS: {e}")
             return f"Error sending message to SQS: {e}", 500
