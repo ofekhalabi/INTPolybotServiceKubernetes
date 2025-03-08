@@ -88,7 +88,7 @@ class Bot:
         
         # send an HTTP request to the `SQS` service for prediction
         params = {"imgName": s3_image_key_upload}
-        sqs_client = boto3.client('sqs')
+        sqs_client = boto3.client('sqs', region_name='eu-north-1')
         try:
             response = sqs_client.send_message(
                 QueueUrl=str(SQS_URL),
