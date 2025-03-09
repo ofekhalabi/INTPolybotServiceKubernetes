@@ -21,4 +21,9 @@ spec:
         env:
         - name: BUCKET_NAME
           value: "ofekh-yolo5servicedocker-project"
+        - name: SQS_URL
+          valueFrom:
+            secretKeyRef:
+              name: yolo5-k8s-secret
+              key: SQS_URL
         
