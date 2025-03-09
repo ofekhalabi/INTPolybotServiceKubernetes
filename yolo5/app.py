@@ -108,16 +108,23 @@ def consume():
                     'time': time.time()
                 }
 
-                # Connect to MongoDB
-                mongo_client = MongoClient('mongodb://mongodb-0:27017,mongodb-1:27017,mongodb-2:27017/?replicaSet=myReplicaSet')
-                # Select the database (polybot-info) and collection (prediction_images)
-                db = mongo_client['polybot-info']
-                collection = db['prediction_images']
-                # Insert the prediction_summary into MongoDB
-                collection.insert_one(prediction_summary)
-                print("Prediction summary inserted successfully.")
-                if "_id" in prediction_summary:
-                    prediction_summary["_id"] = str(prediction_summary["_id"])
+                try:
+                    # Connect to MongoDB
+                    mongo_client = MongoClient('mongodb://mongodb-0:27017,mongodb-1:27017,mongodb-2:27017/?replicaSet=myReplicaSet')
+                    logger.info("Connected to MongoDB")
+                except Exception as e:
+                    logger.error(f"Error connecting to MongoDB: {e}")
+                try:
+                    # Select the database (polybot-info) and collection (prediction_images)
+                    db = mongo_client['polybot-info']
+                    collection = db['prediction_images']
+                    # Insert the prediction_summary into MongoDB
+                    collection.insert_one(prediction_summary)
+                    print("Prediction summary inserted successfully.")
+                    if "_id" in prediction_summary:
+                        prediction_summary["_id"] = str(prediction_summary["_id"])
+                except Exception as e:
+                    logger.error(f"Error inserting prediction summary to MongoDB: {e}")
                 
                 # Delete the message from the queue as the job is considered as DONE
                 sqs_client.delete_message(QueueUrl=SQS_URL, ReceiptHandle=receipt_handle)
