@@ -1,0 +1,53 @@
+name: polybot stack build-deploy
+
+on:
+  push:
+    branches:
+     - main
+    paths:
+     - 'polybot/**'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build and push image
+        run: |
+          DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD=${{ secrets.DOCKERHUB_PASSWORD }}
+
+
+          if [[ -z $DOCKERHUB_USERNAME ]] || [[ -z $DOCKERHUB_PASSWORD ]]; then
+            echo DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD secrets should be configured
+            exit 1
+          fi
+
+          docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+          echo "login success"
+
+          IMAGE_NAME=$DOCKERHUB_USERNAME/polybot:v1.0.${{ github.run_number }}
+          docker build --push -t $IMAGE_NAME .
+          echo "image build and pushed"
+
+      - name: Update YAML manifests
+        run: |
+          cd ./INTPolybotServiceKubernetes/k8s/polybot
+
+          DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+          IMAGE_NAME=$DOCKERHUB_USERNAME/polybot:v1.0.${{ github.run_number }}
+          yq e ".spec.template.spec.containers[0].image = \"$IMAGE_NAME\"" -i deployment.yaml
+          
+
+      - name: Commit and Push changes
+        run: |
+           cd ./INTPolybotServiceKubernetes
+           git config --local user.email "github@action"
+           git config --local user.name "auto-update"
+           git add k8s/polybot/deployment.yaml
+           git commit -m "Update image to $IMAGE_NAME"
+           git push origin main
