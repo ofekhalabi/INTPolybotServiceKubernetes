@@ -111,7 +111,7 @@ def consume():
                 try:
                     # Connect to MongoDB
                     # If your MongoDB is deployed as a StatefulSet with a headless service (which is typical), you might be able to just use the service name
-                    mongo_client = MongoClient('mongodb://mongodb.default.svc.cluster.local:27017/?replicaSet=myReplicaSet')
+                    mongo_client = MongoClient('mongodb://mongodb.default.svc.cluster.local:27017/?replicaSet=rs0')
                     logger.info("Connected to MongoDB")
                 except Exception as e:
                     logger.error(f"Error connecting to MongoDB: {e}")
@@ -124,6 +124,7 @@ def consume():
                     print("Prediction summary inserted successfully.")
                     if "_id" in prediction_summary:
                         prediction_summary["_id"] = str(prediction_summary["_id"])
+                    logger.info(f"Prediction summary inserted successfully: {prediction_summary}")
                 except Exception as e:
                     logger.error(f"Error inserting prediction summary to MongoDB: {e}")
                 
