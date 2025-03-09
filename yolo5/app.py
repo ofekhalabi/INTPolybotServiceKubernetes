@@ -110,7 +110,8 @@ def consume():
 
                 try:
                     # Connect to MongoDB
-                    mongo_client = MongoClient('mongodb://mongodb-0:27017,mongodb-1:27017,mongodb-2:27017/?replicaSet=myReplicaSet')
+                    # If your MongoDB is deployed as a StatefulSet with a headless service (which is typical), you might be able to just use the service name
+                    mongo_client = MongoClient('mongodb://mongodb.default.svc.cluster.local:27017/?replicaSet=myReplicaSet')
                     logger.info("Connected to MongoDB")
                 except Exception as e:
                     logger.error(f"Error connecting to MongoDB: {e}")
