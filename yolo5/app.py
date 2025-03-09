@@ -65,7 +65,7 @@ def consume():
 
             # This is the path for the predicted image with labels
             # The predicted image typically includes bounding boxes drawn around the detected objects, along with class labels and possibly confidence scores.
-            predicted_img_path = f'static/data/{prediction_id}/{original_img_path}'
+            predicted_img_path = f'static/data/{prediction_id}/{img_name}'
 
             # predict the image and upload it to S3
             s3_image_key_upload = f'predictions/{chat_id}_picture.jpg'
