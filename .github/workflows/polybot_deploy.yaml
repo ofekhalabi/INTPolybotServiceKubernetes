@@ -37,6 +37,7 @@ jobs:
           docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
           echo "login success"
 
+          cd polybot
           IMAGE_NAME=$DOCKERHUB_USERNAME/polybot:v1.0.${{ github.run_number }}
           docker build --push -t $IMAGE_NAME .
           echo "image build and pushed"
