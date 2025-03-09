@@ -100,7 +100,7 @@ class Bot:
             return f"Error sending message to SQS: {e}", 500
         
         time.sleep(5)  # Wait for the prediction to complete
-        s3_image_key_download = f'predictions/picture.jpg'
+        s3_image_key_download = f'predictions/{chat_id}_picture.jpg'
         original_img_path = f'/tmp/image.jpg'  # Temporary storage for downloaded image
         try:
             # Download predicted image from S3
@@ -138,5 +138,4 @@ class ObjectDetectionBot(Bot):
             self.handle_photo_message(msg)
 
             
-            # TODO send a job to the SQS queue
             # TODO send message to the Telegram end-user (e.g. Your image is being processed. Please wait...)
