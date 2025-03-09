@@ -16,6 +16,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # Required for pushing changes
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y yq
+
       - name: Build and push image
         run: |
           DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
@@ -36,16 +43,13 @@ jobs:
         
       - name: Update YAML manifests
         run: |
-          cd ./INTPolybotServiceKubernetes/k8s/yolo5
-
           DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
           IMAGE_NAME=$DOCKERHUB_USERNAME/yolo5:v1.0.${{ github.run_number }}
-          yq e ".spec.template.spec.containers[0].image = \"$IMAGE_NAME\"" -i deployment.yaml
+          yq e ".spec.template.spec.containers[0].image = \"$IMAGE_NAME\"" -i  k8s/yolo5/deployment.yaml
           
 
       - name: Commit and Push changes
         run: |
-           cd ./INTPolybotServiceKubernetes
            git config --local user.email "github@action"
            git config --local user.name "auto-update"
            git add k8s/yolo5/deployment.yaml
