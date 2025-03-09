@@ -108,9 +108,9 @@ def consume():
                 }
 
                 # Connect to MongoDB
-                MongoClient = MongoClient('mongodb://mongodb-0:27017,mongodb-1:27017,mongodb-2:27017/?replicaSet=myReplicaSet')
+                mongo_client = MongoClient('mongodb://mongodb-0:27017,mongodb-1:27017,mongodb-2:27017/?replicaSet=myReplicaSet')
                 # Select the database (polybot-info) and collection (prediction_images)
-                db = MongoClient['polybot-info']
+                db = mongo_client['polybot-info']
                 collection = db['prediction_images']
                 # Insert the prediction_summary into MongoDB
                 collection.insert_one(prediction_summary)
