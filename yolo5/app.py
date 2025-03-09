@@ -85,7 +85,7 @@ def consume():
                 return f"Error uploading file: {e}", 500
 
             # Parse prediction labels and create a summary
-            pred_summary_path = Path(f'static/data/{prediction_id}/labels/{original_img_path.split(".")[0]}.txt')
+            pred_summary_path = Path(f'static/data/{prediction_id}/labels/{predicted_img_name.split(".")[0]}.txt')
             if pred_summary_path.exists():
                 with open(pred_summary_path) as f:
                     labels = f.read().splitlines()
