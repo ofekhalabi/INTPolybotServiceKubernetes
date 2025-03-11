@@ -105,6 +105,7 @@ class Bot:
         original_img_path = f'/tmp/image.jpg'  # Temporary storage for downloaded image
         max_retries = 3 # Number of retries to download the predicted image
         try:
+            time.sleep(5)  # Wait for the prediction to be completed
             # Download predicted image from S3
             s3.download_file(bucket_name, s3_image_key_download, original_img_path)
             logger.info(f'Downloaded prediction image completed from {bucket_name}/{s3_image_key_download}')
