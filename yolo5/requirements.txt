@@ -4,3 +4,4 @@ loguru
 boto3
 pymongo
 simplejson
+requests>=2.31.0
