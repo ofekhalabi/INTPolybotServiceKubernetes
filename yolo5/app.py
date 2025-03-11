@@ -145,7 +145,6 @@ def consume():
                 logger.error(f'prediction: {prediction_id}/{original_img_path}. prediction result not found')
                 return f'prediction: {prediction_id}/{original_img_path}. prediction result not found', 404
             
-            
-            
+                       
 if __name__ == "__main__":
     consume()
