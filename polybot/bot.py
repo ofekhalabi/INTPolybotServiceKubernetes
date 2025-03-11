@@ -137,5 +137,3 @@ class ObjectDetectionBot(Bot):
         if self.is_current_msg_photo(msg):
             self.handle_photo_message(msg)
 
-            
-            # TODO send message to the Telegram end-user (e.g. Your image is being processed. Please wait...)
