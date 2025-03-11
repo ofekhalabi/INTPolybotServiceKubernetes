@@ -58,4 +58,6 @@ jobs:
            git add k8s/yolo5/deployment.yaml
            git commit -m "Update image to $IMAGE_NAME"
            git pull
-           git push origin main
+           git pull origin main --no-rebase
+           git push origin main  
+
