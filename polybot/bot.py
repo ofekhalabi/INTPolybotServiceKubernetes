@@ -142,5 +142,5 @@ class ObjectDetectionBot(Bot):
         if self.is_current_msg_photo(msg):
             self.handle_photo_message(msg)
         else:
-            self.send_text(msg['chat']['id'], "this is your message: {msg['text']}")
+            self.send_text(msg['chat']['id'], f"this is your message: {msg['text']}")
 
