@@ -131,11 +131,6 @@ def consume():
                 
                 # Delete the message from the queue as the job is considered as DONE
                 sqs_client.delete_message(QueueUrl=SQS_URL, ReceiptHandle=receipt_handle)
-
-                try:
-                    requests.post(f'http://svc-polybot:8443/results?predictionId={prediction_id}')    
-                except Exception as e:
-                    logger.error(f'Error sending prediction result to Polybot: {e}')
                 return prediction_summary
             
                 # TODO perform a GET request to Polybot to `/results` endpoint
