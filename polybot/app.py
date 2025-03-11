@@ -42,11 +42,18 @@ def results():
         prediction_id = request.args.get('predictionId')
     except KeyError as e:
         raise RuntimeError(f"Missing required query parameter: {e}")
+    
     text_results = get_prediction_summary(prediction_id)
-    chat_id = text_results["chat_id"]
-    bot.send_text(chat_id, text_results)
-    return 'Ok'
-
+    if text_results:
+        # Convert ObjectId to string if exists
+        if "_id" in text_results:
+            text_results["_id"] = str(text_results["_id"])
+            
+        chat_id = text_results["chat_id"]
+        bot.send_text(chat_id, text_results)
+        return 'Ok'
+    else:
+        return 'No results found'
 
 @app.route(f'/loadTest/', methods=['POST'])
 def load_test():
