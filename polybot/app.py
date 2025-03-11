@@ -44,7 +44,6 @@ def load_test():
     return 'Ok'
 
 
-
 if __name__ == "__main__":
     bot = ObjectDetectionBot(TELEGRAM_TOKEN, TELEGRAM_APP_URL)
 
