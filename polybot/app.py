@@ -38,7 +38,10 @@ def results():
         return document.get("prediction_summary") if document else None
 
     # Example usage
-    prediction_id = request.args.get('predictionId')
+    try:
+        prediction_id = request.args.get('predictionId')
+    except KeyError as e:
+        raise RuntimeError(f"Missing required query parameter: {e}")
     text_results = get_prediction_summary(prediction_id)
     chat_id = text_results["chat_id"]
     bot.send_text(chat_id, text_results)
