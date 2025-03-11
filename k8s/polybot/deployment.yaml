@@ -16,23 +16,20 @@ spec:
         app: polybot
     spec:
       containers:
-      - name: polybot
-        image: ofekhalabi/polybot:v1.0.6
-        env:
-        - name: TELEGRAM_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: polybot-k8s-secret
-              key: TELEGRAM_TOKEN
-
-        - name: TELEGRAM_APP_URL
-          value: "https://polybot.devops-int-college.com:8443"
-        
-        - name: BUCKET_NAME
-          value: "ofekh-polybotservicedocker-project"
-        
-        - name: SQS_URL
-          valueFrom:
-            secretKeyRef:
-              name: polybot-k8s-secret
-              key: SQS_URL
+        - name: polybot
+          image: ofekhalabi/polybot:v1.0.1
+          env:
+            - name: TELEGRAM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: polybot-k8s-secret
+                  key: TELEGRAM_TOKEN
+            - name: TELEGRAM_APP_URL
+              value: https://polybot.devops-int-college.com:8443
+            - name: BUCKET_NAME
+              value: ofekh-polybotservicedocker-project
+            - name: SQS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: polybot-k8s-secret
+                  key: SQS_URL
