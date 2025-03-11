@@ -106,6 +106,7 @@ def consume():
                     'original_img_path': original_img_path,
                     'predicted_img_path': predicted_img_path,
                     'labels': labels,
+                    'chat_id': chat_id,
                     'time': time.time()
                 }
 

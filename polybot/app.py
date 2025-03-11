@@ -40,8 +40,8 @@ def results():
     # Example usage
     prediction_id = request.args.get('predictionId')
     text_results = get_prediction_summary(prediction_id)
-    
-    bot.send_text(text_results)
+    chat_id = text_results["chat_id"]
+    bot.send_text(chat_id, text_results)
     return 'Ok'
 
 
