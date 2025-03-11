@@ -7,6 +7,7 @@ import boto3
 from botocore.exceptions import NoCredentialsError
 import json
 
+
 try:
     BUCKET_NAME = os.environ['BUCKET_NAME']
     SQS_URL = os.environ['SQS_URL']
@@ -103,25 +104,22 @@ class Bot:
         s3_image_key_download = f'predictions/{s3_image_key_upload}'
         original_img_path = f'/tmp/image.jpg'  # Temporary storage for downloaded image
         max_retries = 3 # Number of retries to download the predicted image
-        for attempt in range(1,max_retries +1 ):
-            if attempt < max_retries:
-                time.sleep(5) # Wait 5 seconds before retrying
-            try:
-                # Download predicted image from S3
-                s3.download_file(bucket_name, s3_image_key_download, original_img_path)
-                logger.info(f'Downloaded prediction image completed from {bucket_name}/{s3_image_key_download}')
-                # send photo results to the Telegram end-user
-                self.send_photo(chat_id, original_img_path)
-                logger.info(f'Sent photo results to the Telegram end-user')
-                break
-            except FileNotFoundError:
-                logger.error("The file was not found.")
-                return "Predicted image not found", 404
-            except NoCredentialsError:
-                logger.error("AWS credentials not available.")
-                return "AWS credentials not available", 403
-            except Exception as e:
-                logger.error(f"Error downloading file: {e}")
+        try:
+            # Download predicted image from S3
+            s3.download_file(bucket_name, s3_image_key_download, original_img_path)
+            logger.info(f'Downloaded prediction image completed from {bucket_name}/{s3_image_key_download}')
+            # send photo results to the Telegram end-user
+            self.send_photo(chat_id, original_img_path)
+            logger.info(f'Sent photo results to the Telegram end-user')
+        except FileNotFoundError:
+            logger.error("The file was not found.")
+            return "Predicted image not found", 404
+        except NoCredentialsError:
+            logger.error("AWS credentials not available.")
+            return "AWS credentials not available", 403
+        except Exception as e:
+            logger.error(f"Error downloading file: {e}")
+            return f"Error downloading file: {e}", 500
             
 
     

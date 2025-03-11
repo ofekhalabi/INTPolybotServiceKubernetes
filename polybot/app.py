@@ -2,6 +2,8 @@ import flask
 from flask import request
 import os
 from bot import ObjectDetectionBot
+from pymongo import MongoClient
+
 
 app = flask.Flask(__name__)
 
@@ -26,14 +28,20 @@ def webhook():
 
 @app.route(f'/results', methods=['POST'])
 def results():
+    # Connect to MongoDB
+    client = MongoClient('mongodb://mongodb.default.svc.cluster.local:27017/?replicaSet=rs0')
+    db = client["polybot-info"]
+    collection = db["prediction_images"]
+    # Function to retrieve only the 'prediction_summary' for a given prediction_id
+    def get_prediction_summary(prediction_id):
+        document = collection.find_one({"prediction_summary.prediction_id": prediction_id}, {"_id": 0, "prediction_summary": 1})
+        return document.get("prediction_summary") if document else None
+
+    # Example usage
     prediction_id = request.args.get('predictionId')
-
-    # TODO use the prediction_id to retrieve results from MongoDB and send to the end-user
-
-    chat_id = ...
-    text_results = ...
-
-    bot.send_text(chat_id, text_results)
+    text_results = get_prediction_summary(prediction_id)
+    
+    bot.send_text(text_results)
     return 'Ok'
 
 

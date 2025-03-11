@@ -133,7 +133,7 @@ def consume():
                 sqs_client.delete_message(QueueUrl=SQS_URL, ReceiptHandle=receipt_handle)
                 
                 # TODO perform a POST request to Polybot to `/results` endpoint
-                requests.post(f'http://svc-polybot:8443//results?{prediction_id}')
+                requests.post(f'http://svc-polybot:8443/results?{prediction_id}')
                 
                 return prediction_summary
                 
