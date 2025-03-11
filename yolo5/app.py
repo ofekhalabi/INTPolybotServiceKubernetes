@@ -70,7 +70,7 @@ def consume():
             predicted_img_path = f'static/data/{prediction_id}/{predicted_img_name}'
 
             # predict the image and upload it to S3
-            s3_image_key_upload = f'predictions/{chat_id}_picture.jpg'
+            s3_image_key_upload = f'predictions/{img_name}'
             try:
                 # Upload predicted image back to S3
                 s3_client.upload_file(predicted_img_path, BUCKET_NAME, s3_image_key_upload)
@@ -131,9 +131,13 @@ def consume():
                 
                 # Delete the message from the queue as the job is considered as DONE
                 sqs_client.delete_message(QueueUrl=SQS_URL, ReceiptHandle=receipt_handle)
+                
+                # TODO perform a POST request to Polybot to `/results` endpoint
+                requests.post(f'http://svc-polybot:8443//results?{prediction_id}')
+                
                 return prediction_summary
-            
-                # TODO perform a GET request to Polybot to `/results` endpoint
+                
+                
             else:
                 # Delete the message from the queue as the job is considered as DONE
                 sqs_client.delete_message(QueueUrl=SQS_URL, ReceiptHandle=receipt_handle)

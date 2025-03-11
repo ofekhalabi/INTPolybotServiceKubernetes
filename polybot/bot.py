@@ -70,7 +70,8 @@ class Bot:
         # upload the image to S3 Bucket ofekh-polybotservicedocker-project
         s3 = boto3.client('s3')
         bucket_name = BUCKET_NAME
-        s3_image_key_upload = f'{chat_id}_teleBOT_picture.jpg'
+        run_id = int(time.time())
+        s3_image_key_upload = f'{chat_id}_{str(run_id)}_teleBOT_picture.jpg'
         try:
             # Upload predicted image back to S3
             s3.upload_file(str(photo_path), bucket_name, s3_image_key_upload)
