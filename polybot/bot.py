@@ -100,7 +100,7 @@ class Bot:
             return f"Error sending message to SQS: {e}", 500
         
         # Download predicted image from S3
-        s3_image_key_download = f'predictions/{chat_id}_picture.jpg'
+        s3_image_key_download = f'predictions/{s3_image_key_upload}'
         original_img_path = f'/tmp/image.jpg'  # Temporary storage for downloaded image
         max_retries = 3 # Number of retries to download the predicted image
         for attempt in range(1,max_retries +1 ):
