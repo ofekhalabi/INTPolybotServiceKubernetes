@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: yolo5
-          image: ofekhalabi/yolo5:v1.1.11
+          image: ofekhalabi/yolo5:v1.1.12
           env:
             - name: BUCKET_NAME
               value: ofekh-polybotservicedocker-project
