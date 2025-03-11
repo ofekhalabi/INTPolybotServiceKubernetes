@@ -103,6 +103,8 @@ class Bot:
         original_img_path = f'/tmp/image.jpg'  # Temporary storage for downloaded image
         max_retries = 3 # Number of retries to download the predicted image
         for attempt in range(1,max_retries +1 ):
+            if attempt < max_retries:
+                time.sleep(5) # Wait 5 seconds before retrying
             try:
                 # Download predicted image from S3
                 s3.download_file(bucket_name, s3_image_key_download, original_img_path)
@@ -119,8 +121,7 @@ class Bot:
                 return "AWS credentials not available", 403
             except Exception as e:
                 logger.error(f"Error downloading file: {e}")
-            if attempt < max_retries:
-                time.sleep(5)
+            
 
     
     def handle_message(self, msg):
