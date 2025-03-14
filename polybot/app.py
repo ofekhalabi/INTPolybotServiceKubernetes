@@ -51,11 +51,19 @@ def results():
     document = get_prediction_summary(prediction_id)
     if document:
         logger.info(f"Results found for prediction_id: {prediction_id}")
+        message = f"Results for prediction {prediction_id}:\n"
+    
+        # Add detected labels
+        if "labels" in document and document["labels"]:
+            message += "\nDetected objects:\n"
+            for i, label in enumerate(document["labels"]):
+                message += f"{i+1}. {label.get('class', 'unknown')} "
+                message += f"(confidence: {label.get('confidence', 'N/A')})\n"
         # Get chat_id from the document
         try:
             chat_id = document["chat_id"]
             # Send the results to the user
-            bot.send_text(chat_id, document)  # Pass the entire document or format as needed
+            bot.send_text(chat_id, message)
             logger.info(f"Results sent to chat_id: {chat_id}")
             return 'Ok'
         except KeyError as e:
