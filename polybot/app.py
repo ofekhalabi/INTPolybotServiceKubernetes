@@ -36,7 +36,10 @@ def results():
     # Function to retrieve only the 'prediction_summary' for a given prediction_id
     def get_prediction_summary(prediction_id):
         document = collection.find_one({"prediction_id": prediction_id}, {"_id": 0})
-        return document if document else None
+        if document and "_id" in document:
+            document["_id"] = str(document["_id"])
+        return document
+        
 
     # Example usage
     try:
