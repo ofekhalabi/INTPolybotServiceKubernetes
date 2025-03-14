@@ -3,6 +3,7 @@ from flask import request
 import os
 from bot import ObjectDetectionBot
 from pymongo import MongoClient
+from loguru import logger
 
 
 app = flask.Flask(__name__)
@@ -40,18 +41,26 @@ def results():
     # Example usage
     try:
         prediction_id = request.args.get('predictionId')
+        logger.info(f"Received request for prediction_id: {prediction_id}")
     except KeyError as e:
         raise RuntimeError(f"Missing required query parameter: {e}")
     
     text_results = get_prediction_summary(prediction_id)
     if text_results:
         # Convert ObjectId to string if exists
+        logger.info(f"Results found for prediction_id: {prediction_id}")
         if "_id" in text_results:
             text_results["_id"] = str(text_results["_id"])
-            
-        chat_id = text_results["chat_id"]
-        bot.send_text(chat_id, text_results)
-        return 'Ok'
+        logger.info(f"Results: {text_results}")
+        
+        # Send the results to the user
+        try:
+            chat_id = text_results["chat_id"]
+            bot.send_text(chat_id, text_results)
+            logger.info(f"Results sent to chat_id: {chat_id}")
+            return 'Ok'
+        except KeyError as e:
+            logger.error(f"Missing required field in results: {e}")
     else:
         return 'No results found'
 
