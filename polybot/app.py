@@ -58,7 +58,6 @@ def results():
             message += "\nDetected objects:\n"
             for i, label in enumerate(document["labels"]):
                 message += f"{i+1}. {label.get('class', 'unknown')} "
-                message += f"(confidence: {label.get('confidence', 'N/A')})\n"
         # Get chat_id from the document
         try:
             chat_id = document["chat_id"]
