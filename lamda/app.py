@@ -84,6 +84,8 @@ def remove_worker_node(node_name):
         print(f"🔴 Error removing node {node_name}: {e}")
 
 def lambda_handler(event, context):
+    print("Lambda handler started")
+    print(f"Event: {json.dumps(event)}")
     sns_message = json.loads(event['Records'][0]['Sns']['Message'])
     instance_id = sns_message.get("EC2InstanceId", "Unknown")
     lifecycle_hook_name = sns_message.get("LifecycleHookName", "Unknown")
