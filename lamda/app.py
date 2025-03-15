@@ -88,9 +88,9 @@ def lambda_handler(event, context):
     print(f"Event: {json.dumps(event)}")
     sns_message = json.loads(event['Records'][0]['Sns']['Message'])
     instance_id = sns_message.get("EC2InstanceId", "Unknown")
-    lifecycle_hook_name = sns_message.get("LifecycleHookName", "Unknown")
+    lifecycle_transition = sns_message.get("LifecycleTransition", "Unknown")
 
-    if "LAUNCHING" in lifecycle_hook_name:
+    if "EC2_INSTANCE_LAUNCHING" in lifecycle_transition:
         print(f"🚀 New worker node detected: {instance_id}")
 
         join_command = generate_kubeadm_token()
@@ -100,7 +100,7 @@ def lambda_handler(event, context):
         print(f"🔹 Join Command: {join_command}")
         run_join_command(instance_id, join_command)
 
-    elif "TERMINATING" in lifecycle_hook_name:
+    elif "EC2_INSTANCE_TERMINATING" in lifecycle_transition:
         print(f"🔴 Worker node terminating: {instance_id}")
 
         response = ec2_client.describe_instances(InstanceIds=[instance_id])
