@@ -78,8 +78,8 @@ def run_join_command(instance_id, join_command):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-    private_key_path = get_private_key()
-    if not private_key_path:
+    private_key_data = get_private_key()
+    if not private_key_data:
         return None
 
     try:
