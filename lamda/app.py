@@ -2,6 +2,7 @@ import json
 import boto3
 import paramiko
 import subprocess
+import time
 import io  # Added import for in-memory file handling
 
 # AWS clients
@@ -31,6 +32,17 @@ def get_control_plane_ip(instance_id):
 CONTROL_PLANE_INSTANCE_ID = "i-0cde49ef5984afb9e"  
 CONTROL_PLANE_IP = get_control_plane_ip(CONTROL_PLANE_INSTANCE_ID)
 CONTROL_PLANE_USER = "ubuntu"
+
+def check_instance_status(instance_id):
+    """Check the status of an EC2 instance."""
+    try:
+        response = ec2_client.describe_instances(InstanceIds=[instance_id])
+        state = response['Reservations'][0]['Instances'][0]['State']['Name']
+        print(f"Instance {instance_id} is in state: {state}")
+        return state
+    except Exception as e:
+        print(f"Error checking instance status: {e}")
+        return None
 
 def get_private_key():
     """Retrieve private SSH key from AWS Secrets Manager."""
@@ -69,6 +81,14 @@ def generate_kubeadm_token():
 def run_join_command(instance_id, join_command):
     """SSH into the worker node and run the join command."""
     try:
+        time.sleep(30)  # Wait for the worker node to be ready
+        instance_status = check_instance_status(instance_id)
+        if instance_status != "running":
+            print(f"🔴 Instance {instance_id} is not running. Skipping join command.")
+            return None
+    except Exception as e:
+        print(f"🔴 Error checking instance status: {e}")
+    try:
         response = ec2_client.describe_instances(InstanceIds=[instance_id])
         worker_ip = response['Reservations'][0]['Instances'][0]['PublicIpAddress']
     except Exception as e:
@@ -79,6 +99,7 @@ def run_join_command(instance_id, join_command):
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     private_key_data = get_private_key()
+    print(private_key_data)
     if not private_key_data:
         return None
 
