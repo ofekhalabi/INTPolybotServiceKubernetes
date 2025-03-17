@@ -70,7 +70,7 @@ def run_join_command(instance_id, join_command):
     """SSH into the worker node and run the join command."""
     try:
         response = ec2_client.describe_instances(InstanceIds=[instance_id])
-        worker_ip = response['Reservations'][0]['Instances'][0]['PrivateIpAddress']
+        worker_ip = response['Reservations'][0]['Instances'][0]['PublicIpAddress']
     except Exception as e:
         print(f"🔴 Error fetching worker IP: {e}")
         return None
