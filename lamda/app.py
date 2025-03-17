@@ -99,7 +99,6 @@ def run_join_command(instance_id, join_command):
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     private_key_data = get_private_key()
-    print(private_key_data)
     if not private_key_data:
         return None
 
@@ -112,6 +111,7 @@ def run_join_command(instance_id, join_command):
         stdin, stdout, stderr = ssh.exec_command(f"sudo {join_command}")
         print(stdout.read().decode())
         ssh.close()
+        print(f"✅ Successfully joined worker node: {worker_ip}")
     except Exception as e:
         print(f"🔴 Error joining worker node: {e}")
 
