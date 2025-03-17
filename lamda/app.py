@@ -2,6 +2,7 @@ import json
 import boto3
 import paramiko
 import subprocess
+import io  # Added import for in-memory file handling
 
 # AWS clients
 ec2_client = boto3.client("ec2")
@@ -36,14 +37,8 @@ def get_private_key():
     try:
         secret_response = secrets_client.get_secret_value(SecretId="ofekh-control-plane-key")
         private_key_data = secret_response["SecretString"]
-
-        # Save key to a temporary file
-        key_path = "/tmp/control-plane-key.pem"
-        with open(key_path, "w") as key_file:
-            key_file.write(private_key_data)
-        subprocess.run(["chmod", "400", key_path])  # Set correct permissions
-
-        return key_path
+        print("✅ Successfully retrieved SSH key")
+        return private_key_data  # Return the key data directly instead of saving to file
     except Exception as e:
         print(f"🔴 Error retrieving SSH key: {e}")
         return None
@@ -53,12 +48,15 @@ def generate_kubeadm_token():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-    private_key_path = get_private_key()
-    if not private_key_path:
+    private_key_data = get_private_key()
+    if not private_key_data:
         return None
 
     try:
-        private_key = paramiko.RSAKey(filename=private_key_path)
+        # Create key directly from string data
+        private_key = paramiko.RSAKey.from_private_key(
+            file_obj=io.StringIO(private_key_data)
+        )
         ssh.connect(CONTROL_PLANE_IP, username=CONTROL_PLANE_USER, pkey=private_key)
         stdin, stdout, stderr = ssh.exec_command("sudo kubeadm token create --print-join-command")
         join_command = stdout.read().decode().strip()
@@ -75,17 +73,20 @@ def run_join_command(instance_id, join_command):
         worker_ip = response['Reservations'][0]['Instances'][0]['PrivateIpAddress']
     except Exception as e:
         print(f"🔴 Error fetching worker IP: {e}")
-        return
+        return None
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     private_key_path = get_private_key()
     if not private_key_path:
-        return
+        return None
 
     try:
-        private_key = paramiko.RSAKey(filename=private_key_path)
+        # Create key directly from string data
+        private_key = paramiko.RSAKey.from_private_key(
+            file_obj=io.StringIO(private_key_data)
+        )        
         ssh.connect(worker_ip, username="ubuntu", pkey=private_key)
         stdin, stdout, stderr = ssh.exec_command(f"sudo {join_command}")
         print(stdout.read().decode())
@@ -130,6 +131,5 @@ def lambda_handler(event, context):
             remove_worker_node(node_name)
         except Exception as e:
             print(f"Error removing node: {e}")
-
 
     return {"statusCode": 200, "body": "Worker node processed successfully"}
