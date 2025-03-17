@@ -7,8 +7,28 @@ import subprocess
 ec2_client = boto3.client("ec2")
 secrets_client = boto3.client("secretsmanager")
 
-# Define Control Plane details
-CONTROL_PLANE_IP = "10.0.0.27"  # Replace with your Control Plane IP
+def get_control_plane_ip(instance_id):
+    """Retrieve the Public or Private IP of the Control Plane."""
+    try:
+        response = ec2_client.describe_instances(InstanceIds=[instance_id])
+        instance = response['Reservations'][0]['Instances'][0]
+
+        public_ip = instance.get("PublicIpAddress")
+        private_ip = instance.get("PrivateIpAddress")
+
+        if public_ip:
+            print(f"✅ Using Public IP: {public_ip}")
+            return public_ip
+        else:
+            print(f"✅ No Public IP found. Using Private IP: {private_ip}")
+            return private_ip
+    except Exception as e:
+        print(f"🔴 Error retrieving Control Plane IP: {e}")
+        return None
+
+# define the control plane details
+CONTROL_PLANE_INSTANCE_ID = "i-0cde49ef5984afb9e"  
+CONTROL_PLANE_IP = get_control_plane_ip(CONTROL_PLANE_INSTANCE_ID)
 CONTROL_PLANE_USER = "ubuntu"
 
 def get_private_key():
