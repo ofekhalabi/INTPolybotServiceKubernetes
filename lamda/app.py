@@ -103,9 +103,13 @@ def lambda_handler(event, context):
 
     elif "EC2_INSTANCE_TERMINATING" in lifecycle_transition:
         print(f"Worker node terminating: {instance_id}")
+        try:
+            response = ec2_client.describe_instances(InstanceIds=[instance_id])
+            node_name = response['Reservations'][0]['Instances'][0]['PrivateDnsName']
+            print (f"Node name: {node_name}")
+            remove_worker_node(node_name)
+        except Exception as e:
+            print(f"Error removing node: {e}")
 
-        response = ec2_client.describe_instances(InstanceIds=[instance_id])
-        node_name = response['Reservations'][0]['Instances'][0]['PrivateDnsName']
-        remove_worker_node(node_name)
 
     return {"statusCode": 200, "body": "Worker node processed successfully"}
