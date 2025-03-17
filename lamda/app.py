@@ -89,6 +89,7 @@ def lambda_handler(event, context):
     sns_message = json.loads(event['Records'][0]['Sns']['Message'])
     instance_id = sns_message.get("EC2InstanceId", "Unknown")
     lifecycle_transition = sns_message.get("LifecycleTransition", "Unknown")
+    print (f"Lifecycle Transition: {lifecycle_transition}")
 
     if "EC2_INSTANCE_LAUNCHING" in lifecycle_transition:
         print(f"New worker node detected: {instance_id}")
