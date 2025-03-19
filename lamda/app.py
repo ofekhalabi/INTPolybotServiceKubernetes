@@ -7,6 +7,7 @@ import io  # Added import for in-memory file handling
 # AWS clients
 ec2_client = boto3.client("ec2")
 secrets_client = boto3.client("secretsmanager")
+dynamodb = boto3.client("dynamodb")
 
 def get_control_plane_ip(instance_id):
     """Retrieve the Public or Private IP of the Control Plane."""
@@ -42,6 +43,33 @@ def check_instance_status(instance_id):
     except Exception as e:
         print(f"Error checking instance status: {e}")
         return None
+
+def save_instance_private_ip(instance_id, private_ip):
+    """Save private IP to DynamoDB."""
+    try:
+        dynamodb.put_item(
+            TableName="ofekh-polybot-worker-nodes",
+            Item={
+                "InstanceId": {"S": instance_id},
+                "PrivateIpAddress": {"S": private_ip}
+            }
+        )
+        print(f"✅ Saved Private IP {private_ip} for instance {instance_id}")
+    except Exception as e:
+        print(f"🔴 Error saving private IP: {e}")
+
+def get_private_ip_from_db(instance_id):
+    """Retrieve private IP from DynamoDB before instance terminates."""
+    try:
+        response = dynamodb.get_item(
+            TableName="ofekh-polybot-worker-nodes",
+            Key={"InstanceId": {"S": instance_id}}
+        )
+        return response["Item"]["PrivateIpAddress"]["S"]
+    except Exception as e:
+        print(f"🔴 Error retrieving private IP: {e}")
+        return None
+
 
 def get_private_key():
     """Retrieve private SSH key from AWS Secrets Manager."""
@@ -152,7 +180,8 @@ def lambda_handler(event, context):
 
     if "EC2_INSTANCE_LAUNCHING" in lifecycle_transition:
         print(f"New worker node detected: {instance_id}")
-
+        private_id = response['Reservations'][0]['Instances'][0]['PrivateIpAddress']
+        save_instance_private_ip(instance_id, private_id)
         join_command = generate_kubeadm_token() 
         if not join_command:
             return {"statusCode": 500, "body": "Failed to generate join token"}
@@ -163,8 +192,7 @@ def lambda_handler(event, context):
     elif "EC2_INSTANCE_TERMINATING" in lifecycle_transition:
         print(f"Worker node terminating: {instance_id}")
         try:
-            response = ec2_client.describe_instances(InstanceIds=[instance_id])
-            private_ip_worker = response['Reservations'][0]['Instances'][0]['PrivateIpAddress']
+            private_ip_worker = get_private_ip_from_db(instance_id)
             node_name = f"ip-{private_ip_worker.replace('.','-')}" 
             print (f"Node name: {node_name}")
             remove_worker_node(node_name)
