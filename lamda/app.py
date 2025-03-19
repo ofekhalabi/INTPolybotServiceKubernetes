@@ -65,11 +65,11 @@ def get_private_ip_from_db(instance_id):
             TableName="ofekh-polybot-worker-nodes",
             Key={"InstanceId": {"S": instance_id}}
         )
+        print(f"🔍 DynamoDB Response: {json.dumps(response, indent=2)}")
         return response["Item"]["PrivateIpAddress"]["S"]
     except Exception as e:
         print(f"🔴 Error retrieving private IP: {e}")
         return None
-
 
 def get_private_key():
     """Retrieve private SSH key from AWS Secrets Manager."""
