@@ -126,7 +126,6 @@ def remove_worker_node(node_name):
     private_key_data = get_private_key()
     if not private_key_data:
         return None
-    node_name = node_name.split(".")[0]
     try:
         # Create key directly from string data
         private_key = paramiko.RSAKey.from_private_key(
@@ -163,7 +162,8 @@ def lambda_handler(event, context):
         print(f"Worker node terminating: {instance_id}")
         try:
             response = ec2_client.describe_instances(InstanceIds=[instance_id])
-            node_name = response['Reservations'][0]['Instances'][0]['PrivateDnsName']
+            private_ip_worker = response['Reservations'][0]['Instances'][0]['PrivateIpAddress']
+            node_name = f"ip-{str(private_ip_worker).replace('.','-')}" 
             print (f"Node name: {node_name}")
             remove_worker_node(node_name)
         except Exception as e:
