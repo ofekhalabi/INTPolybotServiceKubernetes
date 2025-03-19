@@ -180,6 +180,7 @@ def lambda_handler(event, context):
 
     if "EC2_INSTANCE_LAUNCHING" in lifecycle_transition:
         print(f"New worker node detected: {instance_id}")
+        response = ec2_client.describe_instances(InstanceIds=[instance_id])
         private_id = response['Reservations'][0]['Instances'][0]['PrivateIpAddress']
         save_instance_private_ip(instance_id, private_id)
         join_command = generate_kubeadm_token() 
