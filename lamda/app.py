@@ -29,7 +29,7 @@ def get_control_plane_ip(instance_id):
         return None
 
 # define the control plane details
-CONTROL_PLANE_INSTANCE_ID = "i-0cde49ef5984afb9e"  
+CONTROL_PLANE_INSTANCE_ID = "i-0ec10de6a9c0c195e"  
 CONTROL_PLANE_IP = get_control_plane_ip(CONTROL_PLANE_INSTANCE_ID)
 CONTROL_PLANE_USER = "ubuntu"
 
