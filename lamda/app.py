@@ -1,7 +1,6 @@
 import json
 import boto3
 import paramiko
-import subprocess
 import time
 import io  # Added import for in-memory file handling
 
@@ -121,12 +120,25 @@ def run_join_command(instance_id, join_command):
 
 def remove_worker_node(node_name):
     """Drain and remove a worker node from Kubernetes."""
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    private_key_data = get_private_key()
+    if not private_key_data:
+        return None
+    node_name = node_name.split(".")[0]
     try:
-        subprocess.run(["kubectl", "cordon", node_name], check=True)
-        subprocess.run(["kubectl", "drain", node_name, "--ignore-daemonsets", "--delete-emptydir-data", "--force"], check=True)
-        subprocess.run(["kubectl", "delete", "node", node_name], check=True)
+        # Create key directly from string data
+        private_key = paramiko.RSAKey.from_private_key(
+            file_obj=io.StringIO(private_key_data)
+        )
+        ssh.connect(CONTROL_PLANE_IP, username=CONTROL_PLANE_USER, pkey=private_key)
+        stdin, stdout, stderr = ssh.exec_command(f"sudo kubectl cordon {node_name}")
+        stdin, stdout, stderr = ssh.exec_command(f"sudo kubectl drain {node_name} --ignore-daemonsets --delete-emptydir-data --force")
+        stdin, stdout, stderr = ssh.exec_command(f"sudo kubectl delete node {node_name}")
+        ssh.close()
         print(f"✅ Successfully removed worker node: {node_name}")
-    except subprocess.CalledProcessError as e:
+    except Exception as e:
         print(f"🔴 Error removing node {node_name}: {e}")
 
 def lambda_handler(event, context):
