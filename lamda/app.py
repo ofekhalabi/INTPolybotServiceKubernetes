@@ -163,7 +163,7 @@ def lambda_handler(event, context):
         try:
             response = ec2_client.describe_instances(InstanceIds=[instance_id])
             private_ip_worker = response['Reservations'][0]['Instances'][0]['PrivateIpAddress']
-            node_name = f"ip-{str(private_ip_worker).replace('.','-')}" 
+            node_name = f"ip-{private_ip_worker.replace('.','-')}" 
             print (f"Node name: {node_name}")
             remove_worker_node(node_name)
         except Exception as e:
