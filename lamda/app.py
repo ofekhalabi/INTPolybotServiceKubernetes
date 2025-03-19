@@ -80,14 +80,17 @@ def generate_kubeadm_token():
 
 def run_join_command(instance_id, join_command):
     """SSH into the worker node and run the join command."""
+    # Wait for the worker node to be ready
     try:
-        time.sleep(30)  # Wait for the worker node to be ready
+        time.sleep(180)  # Wait for the worker node to be ready
         instance_status = check_instance_status(instance_id)
         if instance_status != "running":
             print(f"🔴 Instance {instance_id} is not running. Skipping join command.")
             return None
     except Exception as e:
         print(f"🔴 Error checking instance status: {e}")
+
+    # Fetch the worker node Public IP
     try:
         response = ec2_client.describe_instances(InstanceIds=[instance_id])
         worker_ip = response['Reservations'][0]['Instances'][0]['PublicIpAddress']
@@ -102,11 +105,12 @@ def run_join_command(instance_id, join_command):
     if not private_key_data:
         return None
 
+    # Run the join command on the worker node
     try:
         # Create key directly from string data
         private_key = paramiko.RSAKey.from_private_key(
             file_obj=io.StringIO(private_key_data)
-        )        
+        )
         ssh.connect(worker_ip, username="ubuntu", pkey=private_key)
         stdin, stdout, stderr = ssh.exec_command(f"sudo {join_command}")
         print(stdout.read().decode())
