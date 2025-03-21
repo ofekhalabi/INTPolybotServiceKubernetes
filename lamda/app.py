@@ -16,14 +16,10 @@ def get_control_plane_ip(instance_id):
         instance = response['Reservations'][0]['Instances'][0]
 
         public_ip = instance.get("PublicIpAddress")
-        private_ip = instance.get("PrivateIpAddress")
 
         if public_ip:
             print(f"✅ Using Public IP: {public_ip}")
             return public_ip
-        else:
-            print(f"✅ No Public IP found. Using Private IP: {private_ip}")
-            return private_ip
     except Exception as e:
         print(f"🔴 Error retrieving Control Plane IP: {e}")
         return None
